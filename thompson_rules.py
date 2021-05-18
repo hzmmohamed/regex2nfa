@@ -51,8 +51,8 @@ def or_rule(nfa1, nfa2):
     # add start and final states and corresponding transitions
     or_nfa.add_state(0)
     or_nfa.set_starting(0)
-    or_nfa.add_transition(0, [1], '\u03B5')
-    or_nfa.add_transition(0, [n1], '\u03B5')
+    or_nfa.add_transition(0, [nfa1_.starting_state], '\u03B5')
+    or_nfa.add_transition(0, [nfa2_.starting_state], '\u03B5')
 
     or_nfa.add_state(n2)
     or_nfa.set_terminating(n2)
@@ -75,11 +75,15 @@ def star_rule(nfa1):
             star_nfa.add_transition(from_state, to_state, input)
 
     star_nfa.add_state(0)
+    star_nfa.set_starting(0)
     star_nfa.add_state(n)
+    star_nfa.set_terminating(n)
 
     star_nfa.add_transition(0, [1], '\u03B5')
     star_nfa.add_transition(n-1, [n], '\u03B5')
     star_nfa.add_transition(0, [n], '\u03B5')
     star_nfa.add_transition(n-1, [1], '\u03B5')
+    
+    return star_nfa
 
 

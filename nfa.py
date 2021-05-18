@@ -1,6 +1,6 @@
 from utils import alphabet
 import json
-
+from graphviz import Source
 class nfa:
     def __init__(self):
         self.states = []
@@ -69,7 +69,7 @@ class nfa:
         # nfa = self.to_numeric_states(0)
         nfa = self
         nfa_json = {}
-        nfa_json['startingState'] = self.starting_state
+        nfa_json['startingState'] = 'S' + str(self.starting_state)
         
         for state in nfa.states:
             s = {}
@@ -83,3 +83,22 @@ class nfa:
         nfa_json_str =  json.dumps(nfa_json, indent=3,)
         return nfa_json_str
 
+    def to_dot_format(self):
+        dot_file = "digraph DFA {\nrankdir=LR\n"
+        if len(self.states) != 0:
+            dot_file += "root=S1\nstart [shape=point]\nstart->S%d\n" % self.starting_state
+            for state in self.states:
+                if state in self.terminating_states:
+                    dot_file += "S%d [shape=doublecircle]\n" % state
+                else:
+                    dot_file += "S%d [shape=circle]\n" % state
+            for from_state, trns in self.transitions.items():
+                for input, to_states in trns.items():
+                    for to_state in to_states:
+                        dot_file += 'S%d->S%d [label="%s"]\n' % (from_state, to_state, input)
+        dot_file += "}"
+        return dot_file
+
+    def save_to_png(self, filename):
+        source = Source(self.to_dot_format(), filename=filename + ".gv", format="png")
+        source.render(filename, directory='out')
